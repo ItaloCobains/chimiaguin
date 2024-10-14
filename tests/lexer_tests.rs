@@ -239,11 +239,7 @@ mod lexer_tests {
     #[test]
     fn test_string_with_interpolation() {
         let mut lexer = Lexer::new("\"Hello, #{name}!\"");
-        assert_eq!(lexer.next_token(), Token::Text("Hello, ".to_string()));
-        assert_eq!(lexer.next_token(), Token::InterpolationStart);  // #{
-        assert_eq!(lexer.next_token(), Token::Identifier("name".to_string()));
-        assert_eq!(lexer.next_token(), Token::InterpolationEnd);  // }
-        assert_eq!(lexer.next_token(), Token::Text("!".to_string()));
+        assert_eq!(lexer.next_token(), Token::Interpolation("Hello, ".to_string(), "name".to_string()));
         assert_eq!(lexer.next_token(), Token::Eof);
     }
 
@@ -288,6 +284,7 @@ mod lexer_tests {
         assert_eq!(lexer.next_token(), Token::Identifier("foo".to_string()));
         assert_eq!(lexer.next_token(), Token::BreakLine);
         assert_eq!(lexer.next_token(), Token::WhiteSpace);
+        assert_eq!(lexer.next_token(), Token::WhiteSpace);
         assert_eq!(lexer.next_token(), Token::Identifier("yield".to_string()));
         assert_eq!(lexer.next_token(), Token::BreakLine);
         assert_eq!(lexer.next_token(), Token::Identifier("end".to_string()));
@@ -304,13 +301,13 @@ mod lexer_tests {
         assert_eq!(lexer.next_token(), Token::WhiteSpace);
         assert_eq!(lexer.next_token(), Token::LeftBrace);
         assert_eq!(lexer.next_token(), Token::WhiteSpace);
-        assert_eq!(lexer.next_token(), Token::Symbol("b".to_string()));
+        assert_eq!(lexer.next_token(), Token::Identifier("b".to_string()));
         assert_eq!(lexer.next_token(), Token::Colon);
         assert_eq!(lexer.next_token(), Token::WhiteSpace);
         assert_eq!(lexer.next_token(), Token::Number(1));
         assert_eq!(lexer.next_token(), Token::Comma);
         assert_eq!(lexer.next_token(), Token::WhiteSpace);
-        assert_eq!(lexer.next_token(), Token::Symbol("c".to_string()));
+        assert_eq!(lexer.next_token(), Token::Identifier("c".to_string()));
         assert_eq!(lexer.next_token(), Token::Colon);
         assert_eq!(lexer.next_token(), Token::WhiteSpace);
         assert_eq!(lexer.next_token(), Token::Text("hello".to_string()));

@@ -25,6 +25,18 @@ impl<'a> Lexer<'a> {
     pub fn next_token(&mut self) -> Token {
         if let Some(ch) = self.current_char {
             match ch {
+                ':' => {
+                    self.advance();
+                    self.resolve_colon_or_symbol()
+                },
+                '{' => {
+                    self.advance();
+                    Token::LeftBrace
+                },
+                '}' => {
+                    self.advance();
+                    Token::RightBrace
+                },
                 '*' => {
                     self.advance();
                     Token::Asterisk
@@ -180,5 +192,33 @@ impl<'a> Lexer<'a> {
         }
 
         Token::Number(number.parse::<i32>().unwrap_or(0))
+    }
+
+    // Should resolve the token for colon or symbol
+    // If the next char is a letter, it should be a symbol
+    // Otherwise, it should be a colon
+    fn resolve_colon_or_symbol(&mut self) -> Token {
+        match self.current_char {
+            Some(ch) if ch.is_alphabetic() => {
+                self.advance();
+                self.read_symbol(ch)
+            }
+            _ => Token::Colon,
+        }
+    }
+
+    fn read_symbol(&mut self, first_char: char) -> Token {
+        let mut symbol = String::new();
+        symbol.push(first_char);
+
+        while let Some(ch) = self.current_char {
+            if !ch.is_alphabetic() {
+                break;
+            }
+            symbol.push(ch);
+            self.advance();
+        }
+
+        Token::Symbol(symbol)
     }
 }
